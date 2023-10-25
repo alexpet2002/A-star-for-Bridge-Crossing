@@ -1,0 +1,37 @@
+initial state(people on the right) {p1,p2,p3,p4,p5,flashlight}
+initial state (people on the left) {none}
+initial time = 0
+
+final state(people on the right) {}
+final state (people on the left) {p1,p2,p3,p4,p5,flashlight}
+initial time <= time limit
+
+class BestFs
+- heuristic function
+
+class A*
+- f(n) = h(state(n)) +g(n)
+
+class Transition
+- modify (arrays) with people on the left/right
+- moveright
+- moveleft
+
+
+class Main
+
+priority queue (time1,time2,time3,time4)
+if time1 = optimal time
+use backtracking to get all the steps of traversal(combinations)???
+and print them
+
+vid example
+
+            1,3
+            3
+            8,12
+            1
+            1,6
+            1
+            1,4
+most occurred case:1
