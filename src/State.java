@@ -2,6 +2,8 @@ import java.util.*;
 
 public class State implements Comparable<State>
 {
+    private ArrayList<Person> LeftSide = new ArrayList<>();
+    private ArrayList<Person> RightSide = new ArrayList<>();
     private int f, h, g;
     private State father;
     private int totalTime;
@@ -93,5 +95,21 @@ public class State implements Comparable<State>
     public int compareTo(State s)
     {
         return Double.compare(this.f, s.getF()); // compare based on the heuristic score.
+    }
+
+    public ArrayList<Person> getLeftSide() {
+        return LeftSide;
+    }
+
+    public void setLeftSide(ArrayList<Person> leftSide) {
+        LeftSide = leftSide;
+    }
+
+    public ArrayList<Person> getRightSide() {
+        return RightSide;
+    }
+
+    public void setRightSide(ArrayList<Person> rightSide) {
+        RightSide = rightSide;
     }
 }

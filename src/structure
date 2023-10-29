@@ -9,8 +9,15 @@ initial time <= time limit
 class BestFs
 - heuristic function
 
+class Person
+- characteristics of a person (time needed, persons name)
+
 class A*
 - f(n) = h(state(n)) +g(n)
+1. select the 2 fastest to go
+2. select the least fast of the 2 to return back
+3. continue but each time select the slowest duo to cross the bridge
+and the fastest person to return back
 
 class Transition
 - modify (arrays) with people on the left/right
@@ -33,5 +40,5 @@ vid example
             1
             1,6
             1
-            1,4
+            1,3
 most occurred case:1
