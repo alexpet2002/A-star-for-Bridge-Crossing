@@ -42,6 +42,7 @@ public class Astar {
 
             }
             int g = currentState.getG() ;
+            //TODO: fix findSlowestPeople so that it takes tuple as parameter
             int heuristic = heuristic(findSlowestPeople(newRightSide));
             int finalCost = FindTotalTime(heuristic,currentState.getG());
             State generatedState = new State(currentState.getLeftSide(), newRightSide,finalCost,heuristic,g,currentState,finalCost,0);
@@ -50,8 +51,6 @@ public class Astar {
 
         return generatedStates;
     }
-    // {1,3,6,8,12}
-    //{4,5} {1,3}, {6,8,12}
 
     public static boolean isFinalState(ArrayList<Person> RightSide) {
         if (RightSide.isEmpty()) {
@@ -60,7 +59,7 @@ public class Astar {
         return false;
 
     }
-
+    //TODO: fix moveLeft & moveRight
     public static void moveLeft(Tuple2<Person, Person> tuple2, State currentState) {
         currentState.getLeftSide().add(tuple2.getFirst());
         currentState.getLeftSide().add(tuple2.getSecond());
@@ -83,7 +82,7 @@ public class Astar {
         return null;
     }
 
-    //split the heuristic cost based on left/right side
+    //TODO: split the heuristic cost based on left/right side
     public static int heuristic(Tuple2<Person, Person> tuple) {
         return max(tuple.getFirst().getTime(), tuple.getSecond().getTime());
 
@@ -94,7 +93,7 @@ public class Astar {
     public static int FindTotalTime(int heuristicEstimate, int TimeTakenSoFar) {
         return heuristicEstimate + TimeTakenSoFar;
     }
-
+    //TODO: implement Astar
 //    public ArrayList<State> AstarForBridgeCrossing(State currentState, int timeLimit) {
 //        // need to keep track of the side needs to be explored each time
 //        //
