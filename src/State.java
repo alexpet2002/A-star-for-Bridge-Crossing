@@ -7,6 +7,8 @@ public class State implements Comparable<State>
     private int f, h, g;
     private State father;
     private int totalTime;
+    int flashlight = 0;
+
 
     //constructor - fill with arguments if necessary
     public State()
@@ -22,6 +24,17 @@ public class State implements Comparable<State>
     public State(State s)
     {
         // create a state similar with s...
+    }
+
+    public State(ArrayList<Person> leftSide, ArrayList<Person> rightSide, int f, int h, int g, State father, int totalTime, int flashlight) {
+        LeftSide = leftSide;
+        RightSide = rightSide;
+        this.f = f;
+        this.h = h;
+        this.g = g;
+        this.father = father;
+        this.totalTime = totalTime;
+        this.flashlight = flashlight;
     }
 
     public int getF()
@@ -111,5 +124,13 @@ public class State implements Comparable<State>
 
     public void setRightSide(ArrayList<Person> rightSide) {
         RightSide = rightSide;
+    }
+
+    public int getFlashlight() {
+        return flashlight;
+    }
+
+    public void setFlashlight(int flashlight) {
+        this.flashlight = flashlight;
     }
 }

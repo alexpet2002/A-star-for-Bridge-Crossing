@@ -25,4 +25,7 @@ public class Person {
     public void setTime(int time) {
         this.time = time;
     }
+    public String toString(){
+        return time +""+ name;
+    }
 }

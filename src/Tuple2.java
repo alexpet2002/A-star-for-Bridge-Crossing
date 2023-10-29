@@ -1,3 +1,5 @@
+import static java.lang.Math.max;
+
 public class Tuple2<K,V> {
     // a tuple class that will enable the returning of a combination of 2 people
     private K first;
@@ -24,5 +26,8 @@ public class Tuple2<K,V> {
         this.second = second;
     }
 
+    public String toString(){
+        return first.toString() +""+ second.toString();
+    }
 }
 
