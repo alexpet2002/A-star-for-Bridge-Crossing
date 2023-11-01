@@ -1,11 +1,13 @@
 import java.util.ArrayList;
 import java.util.Collections;
+
 import static java.lang.Math.max;
 
 public class Astar {
-    ArrayList<State> successfulOfStates = new ArrayList<>();
+    ArrayList<State> successfulStates = new ArrayList<>();
     ArrayList<State> generatedStates = new ArrayList<>();
     // use max priority queue when moving from right
+    MaxPQ maxPriorityQueue = new MaxPQ(new IntegerComparator());
     // use min priority queue when moving from left
 
 
@@ -99,15 +101,42 @@ public class Astar {
         }
     }
 
-    //TODO: split the heuristic cost based on left/right side???
+    public static State getMaxStateQueue(ArrayList<State> allStates) {
+        MaxPQ tempQueue = new MaxPQ(new IntegerComparator());
+        for (State state : allStates) {
+            tempQueue.add(state.getF());
+        }
+        Integer optimalCost = (Integer) tempQueue.getMax();
+        for (State state: allStates) {
+            if (state.getF() == optimalCost){
+                return state;
+            }
+
+        }
+        return null;
+    }
+    //public static State getMinStateQueue(ArrayList<State> allStates) {
+//        MinPriorityQueue tempQueue = new MinPriorityQueue(new IntegerComparator());
+//        for (State state : allStates) {
+//            tempQueue.add(state.getF());
+//        }
+//        Integer optimalCost = (Integer) tempQueue.getMax();
+//        for (State state: allStates) {
+//            if (state.getF() == optimalCost){
+//                return state;
+//            }
+//
+//        }
+//        return null;
+//    }
     public static int heuristic(Tuple2<Person, Person> tuple) {
         return max(tuple.getFirst().getTime(), tuple.getSecond().getTime());
-
     }
 
     public static int FindTotalTime(int heuristicEstimate, int TimeTakenSoFar) {
         return heuristicEstimate + TimeTakenSoFar;
     }
+
     //TODO: implement Astar
 //    public ArrayList<State> AstarForBridgeCrossing(State currentState, int timeLimit) {
 //        // need to keep track of the side needs to be explored each time
@@ -121,6 +150,30 @@ public class Astar {
 //
 //        return null;
 //    }
+    public void AstarBridgeCrossing(State initialState) {
+        if (initialState.getFather() == null) {
+            successfulStates.add(initialState);
+        }
+        if (initialState.getFlashlight() == 0) {
+            ArrayList<Tuple2> combinations = new ArrayList<>();
+            ArrayList<State> generatedStates = new ArrayList<>();
+            generateCombinations(initialState.getRightSide());
+            generateStates(initialState, combinations);
+            successfulStates.add(getMaxStateQueue(generatedStates));
+        }
+        if (initialState.getFlashlight() == 1) {
+            ArrayList<Tuple2> combinations = new ArrayList<>();
+            ArrayList<State> generatedStates = new ArrayList<>();
+            generateCombinations(initialState.getRightSide());
+            generateStates(initialState, combinations);
+            //successfulStates.add(getMinStateQueue(generatedStates));
+
+        }
+        if (isFinalState(initialState.getRightSide())) {
+
+        }
+
+    }
 
     public static void main(String[] args) {
         ArrayList<Person> people = new ArrayList<>();
