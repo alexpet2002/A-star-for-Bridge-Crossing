@@ -1,11 +1,12 @@
 import java.util.ArrayList;
 import java.util.Collections;
-
 import static java.lang.Math.max;
 
 public class Astar {
     ArrayList<State> successfulOfStates = new ArrayList<>();
     ArrayList<State> generatedStates = new ArrayList<>();
+    // use max priority queue when moving from right
+    // use min priority queue when moving from left
 
 
     // Generate combinations based on the available people you have on the right side
@@ -29,23 +30,22 @@ public class Astar {
             System.out.println(tuple);
         }
     }
-    // Generate States based on the combinations of people generated previously
 
-    public static ArrayList<State> generateStates(State currentState,ArrayList<Tuple2> combinations) {
+    // Generate States based on the combinations of people generated previously
+    public static ArrayList<State> generateStates(State currentState, ArrayList<Tuple2> combinations) {
         ArrayList<State> generatedStates = new ArrayList<>();
         int size = currentState.getRightSide().size();
-        for (Tuple2 tuple:combinations) {
+        for (Tuple2 tuple : combinations) {
             ArrayList<Person> newRightSide = new ArrayList<>();
             for (int i = 0; i < size; i++) {
                 newRightSide.add(currentState.getRightSide().get(i));
-                moveLeft(combinations.get(i),currentState);
+                moveLeft(combinations.get(i), currentState);
 
             }
-            int g = currentState.getG() ;
-            //TODO: fix findSlowestPeople so that it takes tuple as parameter
-            int heuristic = heuristic(findSlowestPeople(newRightSide));
-            int finalCost = FindTotalTime(heuristic,currentState.getG());
-            State generatedState = new State(currentState.getLeftSide(), newRightSide,finalCost,heuristic,g,currentState,finalCost,0);
+            int g = currentState.getG();
+            int heuristic = heuristic(tuple);
+            int finalCost = FindTotalTime(heuristic, currentState.getG());
+            State generatedState = new State(currentState.getLeftSide(), newRightSide, finalCost, heuristic, g, currentState, finalCost, 0);
             generatedStates.add(generatedState);
         }
 
@@ -53,21 +53,23 @@ public class Astar {
     }
 
     public static boolean isFinalState(ArrayList<Person> RightSide) {
-        if (RightSide.isEmpty()) {
-            return true;
-        }
-        return false;
+        return RightSide.isEmpty();
 
     }
+
     //TODO: fix moveLeft & moveRight
     public static void moveLeft(Tuple2<Person, Person> tuple2, State currentState) {
         currentState.getLeftSide().add(tuple2.getFirst());
         currentState.getLeftSide().add(tuple2.getSecond());
+        currentState.getRightSide().remove(tuple2.getSecond());
+        currentState.getRightSide().remove(tuple2.getFirst());
     }
 
     public void moveRight(Tuple2<Person, Person> tuple2, State currentState) {
-        currentState.getRightSide().add(tuple2.getFirst());
-        currentState.getRightSide().add(tuple2.getSecond());
+        currentState.getLeftSide().add(tuple2.getFirst());
+        currentState.getLeftSide().add(tuple2.getSecond());
+        currentState.getLeftSide().remove(tuple2.getSecond());
+        currentState.getLeftSide().remove(tuple2.getFirst());
     }
 
     private static Tuple2<Person, Person> findSlowestPeople(ArrayList<Person> RightSide) {
@@ -75,20 +77,33 @@ public class Astar {
             RightSide.sort(Collections.reverseOrder());
             Person person1 = RightSide.get(0);
             Person person2 = RightSide.get(1);
-
             // Return the two slowest people to cross.
             return new Tuple2<Person, Person>(person1, person2);
         }
         return null;
     }
 
-    //TODO: split the heuristic cost based on left/right side
+    private static int calculateHeuristic(ArrayList<Integer> leftBank) {
+        int numPeopleOnLeft = leftBank.size();
+
+        if (numPeopleOnLeft == 0) {
+            return 0; // Goal state, no heuristic cost.
+        } else if (numPeopleOnLeft == 1) {
+            return leftBank.get(0); // Only one person, so their time is the heuristic.
+        } else {
+            // Sort the leftBank in non-decreasing order of speed.
+            Collections.sort(leftBank);
+
+            // Return the time required for the two slowest people to cross.
+            return leftBank.get(numPeopleOnLeft - 2); // or leftBank.get(numPeopleOnLeft - 1) for the slowest person
+        }
+    }
+
+    //TODO: split the heuristic cost based on left/right side???
     public static int heuristic(Tuple2<Person, Person> tuple) {
         return max(tuple.getFirst().getTime(), tuple.getSecond().getTime());
 
     }
-    //Node f(n)
-    //g(n)
 
     public static int FindTotalTime(int heuristicEstimate, int TimeTakenSoFar) {
         return heuristicEstimate + TimeTakenSoFar;
@@ -108,7 +123,7 @@ public class Astar {
 //    }
 
     public static void main(String[] args) {
-        ArrayList<Person> people= new ArrayList<>();
+        ArrayList<Person> people = new ArrayList<>();
         Person p1 = new Person("a", 1);
         Person p2 = new Person("b", 3);
         Person p3 = new Person("c", 6);
@@ -120,6 +135,9 @@ public class Astar {
         people.add(p4);
         people.add(p5);
         Astar test = new Astar();
+        State st1 = new State();
+//        st1.setLeftSide();
+//        st1.setRightSide();
         test.printCombinations(generateCombinations(people));
     }
 
