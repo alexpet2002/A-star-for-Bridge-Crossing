@@ -119,7 +119,7 @@ public class Astar {
 
 
     public void AstarBridgeCrossing(State state) {
-        while (!isFinalState(state.getRightSide())) {
+        while (state != null && !isFinalState(state.getRightSide())) {
             // if the arraylist is empty(meaning the state is the initial state to be explored)
             if (successfulStates.isEmpty()) {
                 successfulStates.add(state);
@@ -142,7 +142,7 @@ public class Astar {
                         System.out.println("error");
                     }
                 }
-                if (state.getFlashlight() == 1) {
+                else if (state.getFlashlight() == 1) {
                     ArrayList<State> generatedStates;
                     generatedStates = generateStates(state);
                     state = getMinStateQueue(generatedStates);
@@ -160,8 +160,7 @@ public class Astar {
 
     public void printSuccessfulStates() {
         for (State st : successfulStates) {
-            System.out.println(st.getLeftSide());
-
+            System.out.println("people on the left: "+ st.getLeftSide() + " people on the right side: " +st.getRightSide());
         }
     }
 
