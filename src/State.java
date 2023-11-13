@@ -17,7 +17,7 @@ public class State implements Comparable<State>
         this.h = 0;
         this.g = 0;
         this.father = null;
-        this.totalTime = 0;
+//        this.totalTime = 0;
     }
 
     // copy constructor
@@ -26,7 +26,7 @@ public class State implements Comparable<State>
         // create a state similar with s...
     }
 
-    public State(ArrayList<Person> leftSide, ArrayList<Person> rightSide, int f, int h, int g, State father, int totalTime, int flashlight) {
+    public State(ArrayList<Person> leftSide, ArrayList<Person> rightSide, int f, int h, int g, State father, int flashlight) {
         LeftSide = leftSide;
         RightSide = rightSide;
         this.f = f;
