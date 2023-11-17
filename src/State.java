@@ -6,6 +6,7 @@ public class State implements Comparable<State>
 {
     private ArrayList<Person> LeftSide = new ArrayList<>();
     private ArrayList<Person> RightSide = new ArrayList<>();
+    private ArrayList<State> Children = new ArrayList<>();
     private int f, h, g;
     private State father;
     private Tuple2<Person, Person> comb;
@@ -99,7 +100,7 @@ public class State implements Comparable<State>
 
     public void print() {}
 
-    public ArrayList<State> getChildren() {return null;}
+    public ArrayList<State> getChildren() {return Children;}
 
     public boolean isFinal() {return true;}
 
@@ -145,5 +146,9 @@ public class State implements Comparable<State>
 
     public void setComb(Tuple2<Person, Person> comb) {
         this.comb = comb;
+    }
+
+    public void setChildren(ArrayList<State> children) {
+        Children = children;
     }
 }
