@@ -1,12 +1,15 @@
 import java.util.*;
 
+import static java.lang.Math.abs;
+
 public class State implements Comparable<State>
 {
     private ArrayList<Person> LeftSide = new ArrayList<>();
     private ArrayList<Person> RightSide = new ArrayList<>();
     private int f, h, g;
     private State father;
-    private int totalTime;
+    private Tuple2<Person, Person> comb;
+//    private int totalTime;
     int flashlight = 0;
 
 
@@ -26,6 +29,16 @@ public class State implements Comparable<State>
         // create a state similar with s...
     }
 
+    public State(ArrayList<Person> leftSide, ArrayList<Person> rightSide, int f, int h, int g, State father, int flashlight, Tuple2<Person, Person> comb) {
+        LeftSide = leftSide;
+        RightSide = rightSide;
+        this.f = f;
+        this.h = h;
+        this.g = g;
+        this.father = father;
+        this.flashlight = flashlight;
+        this.comb = comb;
+    }
     public State(ArrayList<Person> leftSide, ArrayList<Person> rightSide, int f, int h, int g, State father, int flashlight) {
         LeftSide = leftSide;
         RightSide = rightSide;
@@ -33,10 +46,12 @@ public class State implements Comparable<State>
         this.h = h;
         this.g = g;
         this.father = father;
-        this.totalTime = totalTime;
         this.flashlight = flashlight;
     }
-
+    public int getCombDifference(){
+        int difference = abs(comb.getFirst().getTime() - comb.getSecond().getTime());
+        return difference;
+    }
     public int getF()
     {
         return this.f;
@@ -75,16 +90,6 @@ public class State implements Comparable<State>
     public void setFather(State f)
     {
         this.father = f;
-    }
-
-    public int getTotalTime()
-    {
-        return this.totalTime;
-    }
-
-    public void setTotalTime(int time)
-    {
-        this.totalTime = time;
     }
 
     public void evaluate()
@@ -132,5 +137,13 @@ public class State implements Comparable<State>
 
     public void setFlashlight(int flashlight) {
         this.flashlight = flashlight;
+    }
+
+    public Tuple2<Person, Person> getComb() {
+        return comb;
+    }
+
+    public void setComb(Tuple2<Person, Person> comb) {
+        this.comb = comb;
     }
 }

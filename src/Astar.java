@@ -6,8 +6,12 @@ import static java.lang.Math.max;
 public class Astar {
     ArrayList<State> successfulStates = new ArrayList<>();
     // use max priority queue when moving from right
-    MaxPQ maxPriorityQueue = new MaxPQ(new IntegerComparator());
     // use min priority queue when moving from left
+    int totalTime = 30;
+
+//    public Astar(int totalTime) {
+//        this.totalTime = totalTime;
+//    }
 
 
     // Generate combinations based on the available people you have on the right side
@@ -38,22 +42,23 @@ public class Astar {
         for (Tuple2 tuple : combinations) {
             ArrayList<Person> newRightSide = new ArrayList<>(currentState.getRightSide());
             ArrayList<Person> newLeftSide = new ArrayList<>(currentState.getLeftSide());
-            moveLeft(tuple,newLeftSide, newRightSide);
+            moveLeft(tuple, newLeftSide, newRightSide);
             int g = currentState.getG();
             int heuristic = heuristic(tuple);
             int finalCost = FindTotalTime(heuristic, currentState.getG());
-            State generatedState = new State(newLeftSide, newRightSide, finalCost, heuristic, g, currentState, 0);
+            State generatedState = new State(newLeftSide, newRightSide, finalCost, heuristic, finalCost, currentState, 0, tuple);
             generatedStates.add(generatedState);
         }
 
         return generatedStates;
     }
-    public static ArrayList<State> generateStates(State currentState){
+
+    public static ArrayList<State> generateStates(State currentState) {
         ArrayList<State> generatedStates = new ArrayList<>();
-        for (Person person: currentState.getLeftSide()) {
+        for (Person person : currentState.getLeftSide()) {
             ArrayList<Person> newRightSide = new ArrayList<>(currentState.getRightSide());
             ArrayList<Person> newLeftSide = new ArrayList<>(currentState.getLeftSide());
-            moveRight(person, newLeftSide,newRightSide);
+            moveRight(person, newLeftSide, newRightSide);
             int g = currentState.getG();
             int heuristic = person.getTime();
             int finalCost = FindTotalTime(heuristic, currentState.getG());
@@ -69,7 +74,6 @@ public class Astar {
 
     }
 
-    //TODO: fix moveLeft & moveRight
     public static void moveLeft(Tuple2<Person, Person> tuple2, ArrayList<Person> l, ArrayList<Person> r) {
         l.add(tuple2.getFirst());
         l.add(tuple2.getSecond());
@@ -95,72 +99,118 @@ public class Astar {
 
 
     public static State getMaxStateQueue(ArrayList<State> allStates) {
-        MaxPQ tempQueue = new MaxPQ(new IntegerComparator());
+        MaxPQ maxTempQueue = new MaxPQ(new IntegerComparator());
+        MinPQ minQueue = new MinPQ(new IntegerComparator());
+        // Populate the priority queue
         for (State state : allStates) {
-            tempQueue.add(state.getF());
+            maxTempQueue.add(state.getF());
         }
-        Integer optimalCost = (Integer) tempQueue.getMax();
+        // Get the optimal cost
+        Integer optimalCost = (Integer) maxTempQueue.getMax();
+
+        // Iterate through all states to find the optimal state
         for (State state : allStates) {
             if (state.getF() == optimalCost) {
+                int difference = state.getCombDifference();
+                minQueue.add(difference);
+            }
+        }
+        int optimalDiff = (Integer) minQueue.getMin();
+        for (State state : allStates) {
+            int difference = state.getCombDifference();
+            if (state.getF() == optimalCost && difference == optimalDiff) {
                 return state;
             }
-
         }
-        return null;
+
+        return null; // Return null if no optimal state is found
     }
 
     public static int heuristic(Tuple2<Person, Person> tuple) {
         return max(tuple.getFirst().getTime(), tuple.getSecond().getTime());
     }
-
     public static int FindTotalTime(int heuristicEstimate, int TimeTakenSoFar) {
         return heuristicEstimate + TimeTakenSoFar;
     }
 
-
-    public void AstarBridgeCrossing(State state) {
-        while (state != null && !isFinalState(state.getRightSide())) {
-            // if the arraylist is empty(meaning the state is the initial state to be explored)
-            if (successfulStates.isEmpty()) {
-                successfulStates.add(state);
-            // else check on which side the flashlight to generate combinations of 2 people(if on the right side) and 1 person if on the left side
-            } else {
-                if (state.getFlashlight() == 0) {
-                    ArrayList<Tuple2> combinations;
-                    ArrayList<State> generatedStates;
-                    combinations = generateCombinations(state.getRightSide());
-                    generatedStates = generateStates(state, combinations);
-                    state = getMaxStateQueue(generatedStates);
-                    successfulStates.add(state);
-
-                    try {
-                        state.setFather(state);
-                        state = getMaxStateQueue(generatedStates);
-                        state.setFlashlight(1);
-
-                    }catch (Exception e){
-                        System.out.println("error");
-                    }
-                }
-                else if (state.getFlashlight() == 1) {
-                    ArrayList<State> generatedStates;
-                    generatedStates = generateStates(state);
-                    state = getMinStateQueue(generatedStates);
-                    successfulStates.add(state);
-                }
-
-
-            }
-
-        }
-        System.out.println("the path was found!");
+    public static ArrayList<State> generateStatesFromComb(State state) {
+        ArrayList<Tuple2> combinations;
+        ArrayList<State> generatedStates;
+        combinations = generateCombinations(state.getRightSide());
+        generatedStates = generateStates(state, combinations);
+        return generatedStates;
+    }
+    public void printStates(){
 
     }
+    public void AstarBridgeCrossing(State state) {
+        int time = 0;
+        while (state != null && !isFinalState(state.getRightSide()) && time <= totalTime) {
+            // if the arraylist is empty(meaning the state is the initial state to be explored)
+            if (successfulStates.size() == 1) {
+                ArrayList<State> generatedStates = new ArrayList<>(generateStatesFromComb(state));
+                State newState = getMinStateQueue(generatedStates);
+                newState.setFather(state);
+                state = newState;
+                successfulStates.add(state);
+                System.out.println(state.getComb());
+                System.out.println(state.getG());
+                time = time + state.getH();
+                state.setFlashlight(1);
+                System.out.println("total time so far is: "+ time);
+            }
+            if (successfulStates.isEmpty()) {
+                successfulStates.add(state);
+                // else check on which side the flashlight to generate combinations of 2 people(if on the right side) and 1 person if on the left side
+            } else {
+                if (state.getFlashlight() == 0) {
+                    ArrayList<State> generatedStates = new ArrayList<>(generateStatesFromComb(state));
+                    State newState = getMaxStateQueue(generatedStates);
+                    newState.setFather(state);
+                    state = newState;
+                    successfulStates.add(state);
+                    System.out.println(state.getComb());
+                    System.out.println(state.getG());
+                    time = time + state.getH();
+                    state.setFlashlight(1);
+                    System.out.println("total time so far is: "+ time);
 
+                } else if (state.getFlashlight() == 1) {
+                    ArrayList<State> generatedStates;
+                    generatedStates = generateStates(state);
+                    State newState = getMinStateQueue(generatedStates);
+                    newState.setFather(state);
+//                    newState.setG(state.getF());
+                    state = newState;
+                    successfulStates.add(state);
+                    System.out.println(state.getG());
+                    System.out.println(state.getF());
+                    time = time + state.getH();
+                    state.setFlashlight(0);
+                    System.out.println("total time so far is: "+ time);
+                }
+            }
+            if (time > totalTime) {
+                backTrack(state);
+            }
+
+//            throw new RuntimeException("Error: The path couldn't be found under the given time limit. Please try another time limit!");
+        }
+
+    }
+    //generate children left
+    private void backTrack(State currentState) {
+        while (currentState != null) {
+            State previousState;
+            previousState = currentState.getFather();
+            previousState.getChildren().remove(currentState);
+            successfulStates.remove(successfulStates.size() - 1); // Remove the last state
+        }
+    }
 
     public void printSuccessfulStates() {
         for (State st : successfulStates) {
-            System.out.println("people on the left: "+ st.getLeftSide() + " people on the right side: " +st.getRightSide());
+            System.out.println("people on the left: " + st.getLeftSide() + " people on the right side: " + st.getRightSide());
         }
     }
 
@@ -186,7 +236,7 @@ public class Astar {
         Person a = new Person("Sasha", 1);
         Person b = new Person("Sasha", 3);
         Person c = new Person("Jo", 6);
-        Person d = new Person("Sara",8 );
+        Person d = new Person("Sara", 8);
         Person e = new Person("Max", 12);
         rightSide.add(a);
         rightSide.add(b);
@@ -195,17 +245,6 @@ public class Astar {
         rightSide.add(e);
         State initialState = new State(leftSide, rightSide, 0, 0, 0, null, 0);
         algo.AstarBridgeCrossing(initialState);
-        System.out.println("path:");
-        algo.printSuccessfulStates();
-//        ArrayList<Tuple2> comb = new ArrayList<>();
-//        comb.add(new Tuple2<>(a,b));
-//        comb.add(new Tuple2<>(b, c));
-//        ArrayList<State> st=generateStates(initialState, comb);
-//        for (State s:st) {
-//            System.out.println(s.getLeftSide() +""+s.getRightSide());
-//
-//        }
-
     }
 
 }
