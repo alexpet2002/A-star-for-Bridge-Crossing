@@ -46,3 +46,70 @@ most occurred case:1
 {123} {4568}
 
 {12345} {68}
+
+
+L:[] R:[1Sasha, 3Sasha, 6Jo, 8Sara, 12Max]
+total time so far is: 0
+
+L:[1Sasha, 3Sasha] R:[6Jo, 8Sara, 12Max]
+total time so far is: 3
+
+L:[3Sasha] R:[6Jo, 8Sara, 12Max, 1Sasha]
+total time so far is: 4
+
+
+L:[3Sasha, 8Sara, 12Max] R:[6Jo, 1Sasha]
+total time so far is: 16
+
+
+L:[8Sara, 12Max] R:[6Jo, 1Sasha, 3Sasha]
+total time so far is: 19
+
+
+L:[8Sara, 12Max, 6Jo, 3Sasha] R:[1Sasha]
+total time so far is: 25
+
+
+L:[8Sara, 12Max, 6Jo] R:[1Sasha, 3Sasha]
+total time so far is: 28
+
+
+L:[8Sara, 12Max, 6Jo, 1Sasha, 3Sasha] R:[]
+total time so far is: 31
+
+
+L:[8Sara, 12Max, 6Jo, 3Sasha] R:[1Sasha]
+total time so far is: 25
+
+//- {12,6,3} {1,8}
+//- {8,6,3} {1,12}
+//- {8,12,3} {1,6}
+//- {8,12,6} {1,3}
+
+Copy code
+private State backTrack(State currentState) {
+    while (currentState != null && currentState.getTime() > totalTime) {
+        State parentState = currentState.getFather();
+        ArrayList<State> children = parentState.getChildren();
+
+        // Remove currentState from the children
+        children.remove(currentState);
+
+        if (children.isEmpty()) {
+            // If there are no more children, continue backtracking
+            currentState = parentState;
+        } else {
+            // If there are remaining children, select the next one
+            State newState = getMinStateQueue(children);
+            newState.setFather(parentState);
+            currentState = newState;
+        }
+    }
+
+    return currentState;
+}
+In this updated version, the method iterates through the ancestor states until it finds a state whose time is within the limit. It correctly removes the current state from its parent's children and continues backtracking.
+
+Also, note that the backTrack method is now returning the final state after backtracking, so you may need to update the AstarBridgeCrossing method to handle this correctly.
+
+Make sure to test the modified code to ensure that it produces the desired results.

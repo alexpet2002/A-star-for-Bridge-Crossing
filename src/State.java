@@ -1,22 +1,22 @@
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Objects;
 
 import static java.lang.Math.abs;
 
-public class State implements Comparable<State>
-{
+public class State implements Comparable<State> {
     private ArrayList<Person> LeftSide = new ArrayList<>();
     private ArrayList<Person> RightSide = new ArrayList<>();
     private ArrayList<State> Children = new ArrayList<>();
     private int f, h, g;
     private State father;
     private Tuple2<Person, Person> comb;
-//    private int totalTime;
+    int time;
+    //    private int totalTime;
     int flashlight = 0;
 
 
     //constructor - fill with arguments if necessary
-    public State()
-    {
+    public State() {
         this.f = 0;
         this.h = 0;
         this.g = 0;
@@ -25,8 +25,7 @@ public class State implements Comparable<State>
     }
 
     // copy constructor
-    public State(State s)
-    {
+    public State(State s) {
         // create a state similar with s...
     }
 
@@ -40,6 +39,7 @@ public class State implements Comparable<State>
         this.flashlight = flashlight;
         this.comb = comb;
     }
+
     public State(ArrayList<Person> leftSide, ArrayList<Person> rightSide, int f, int h, int g, State father, int flashlight) {
         LeftSide = leftSide;
         RightSide = rightSide;
@@ -49,70 +49,63 @@ public class State implements Comparable<State>
         this.father = father;
         this.flashlight = flashlight;
     }
-    public int getCombDifference(){
+
+    public int getCombDifference() {
         int difference = abs(comb.getFirst().getTime() - comb.getSecond().getTime());
         return difference;
     }
-    public int getF()
-    {
+
+    public int getF() {
         return this.f;
     }
 
-    public int getG()
-    {
+    public int getG() {
         return this.g;
     }
 
-    public int getH()
-    {
+    public int getH() {
         return this.h;
     }
 
-    public State getFather()
-    {
+    public State getFather() {
         return this.father;
     }
 
-    public void setF(int f)
-    {
+    public void setF(int f) {
         this.f = f;
     }
 
-    public void setG(int g)
-    {
+    public void setG(int g) {
         this.g = g;
     }
 
-    public void setH(int h)
-    {
+    public void setH(int h) {
         this.h = h;
     }
 
-    public void setFather(State f)
-    {
+    public void setFather(State f) {
         this.father = f;
     }
 
-    public void evaluate()
-    {
+    public void evaluate() {
         //calculate f...
     }
 
-    public void print() {}
+//    public String toString() {
+//        return time + Person.toString();
+//
+//    }
 
-    public ArrayList<State> getChildren() {return Children;}
+    public ArrayList<State> getChildren() {
+        return Children;
+    }
 
-    public boolean isFinal() {return true;}
+    public boolean isFinal() {
+        return true;
+    }
 
     @Override
-    public boolean equals(Object obj) {return true;}
-
-    @Override
-    public int hashCode() {return 0;}
-
-    @Override
-    public int compareTo(State s)
-    {
+    public int compareTo(State s) {
         return Double.compare(this.f, s.getF()); // compare based on the heuristic score.
     }
 
@@ -150,5 +143,39 @@ public class State implements Comparable<State>
 
     public void setChildren(ArrayList<State> children) {
         Children = children;
+    }
+
+    public int getTime() {
+        return time;
+    }
+
+    public void setTime(int time) {
+        this.time = time;
+    }
+
+    //    public boolean equals(State p) {
+//        if (!(p instanceof State)) {
+//            return false;
+//        }
+//        State other = (State) p;
+//        return p.getLeftSide().equals(other.getLeftSide()) && p.getRightSide().equals(other.getRightSide());
+//    }
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null || getClass() != obj.getClass()) {
+            return false;
+        }
+        State otherState = (State) obj;
+        // Compare the LeftSide and RightSide properties for equality
+        return this.LeftSide.equals(otherState.LeftSide) && this.RightSide.equals(otherState.RightSide);
+    }
+
+    @Override
+    public int hashCode() {
+        // Hash the LeftSide and RightSide properties
+        return Objects.hash(LeftSide, RightSide);
     }
 }

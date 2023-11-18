@@ -2,7 +2,7 @@ public class Person {
     private String name;
     private int time;
 
-    public Person(String name,int time) {
+    public Person(String name, int time) {
         this.name = name;
         this.time = time;
     }
@@ -25,7 +25,21 @@ public class Person {
     public void setTime(int time) {
         this.time = time;
     }
-    public String toString(){
-        return time +""+ name;
+
+    public String toString() {
+        return time + "" + name;
+    }
+
+    public boolean equals(Person p) {
+        if (!(p instanceof Person)) {
+            return false;
+        }
+        Person other = (Person) p;
+        return name.equals(other.name) && time == other.time;
+    }
+
+    public int hashCode() {
+        return name.hashCode();
+
     }
 }
