@@ -6,9 +6,15 @@ public class Astar {
     //Astar algorithm implementation using MinPq and MaxPQ
     // use max priority queue when moving from right
     // use min priority queue when moving from left
-    int totalTime = 30; // time limit is 30
+
+    int totalTime ; // time limit is 30
     ArrayList<State> successfulStates = new ArrayList<>();
     ArrayList<Tuple2<Person, Person>> successfulCombinations = new ArrayList<>();
+
+    public Astar(int totalTime) {
+        this.totalTime = totalTime;
+    }
+
 
     // Generate combinations based on the available people you have on the right side
     public static ArrayList<Tuple2> generateCombinations(ArrayList<Person> currentSide) {
@@ -141,7 +147,7 @@ public class Astar {
         return generatedStates;
     }
 
-    //A* algorithm
+    //recursive implementation of A* algorithm
     public void AstarBridgeCrossing(State state) {
         int time = state.getTime();
 
@@ -252,8 +258,8 @@ public class Astar {
             currentState = newPreviousState;
             return currentState;
         } else {
+            //go one state backwards
             removeStateandComb(currentState);
-            // Remove the last state
             State previousState;
             previousState = currentState.getFather();
             previousState.getChildren().remove(currentState);

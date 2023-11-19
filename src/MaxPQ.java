@@ -179,13 +179,5 @@ public class MaxPQ implements PriorityQueueMax {
         return size;
     }
 
-    public static void main(String[] args) {
-        MaxPQ q = new MaxPQ(new IntegerComparator());
-        q.add(3);
-        q.add(4);
-        q.add(5);
-        q.add(6);
-        System.out.println(q.getMax());
-    }
 }
 
