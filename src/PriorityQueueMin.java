@@ -1,4 +1,4 @@
-public interface PriorityQueue {
+public interface PriorityQueueMin {
     /**
      * Inserts the specified element into this priority queue.
      *
@@ -20,7 +20,7 @@ public interface PriorityQueue {
      *
      * @return the head of the queue
      */
-    Object getMax();
+    Object getMin();
 }
 
 

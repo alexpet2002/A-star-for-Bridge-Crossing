@@ -1,6 +1,6 @@
 import java.util.Comparator;
 
-public class MaxPQ implements PriorityQueue {
+public class MaxPQ implements PriorityQueueMax {
     // priority queue
     // heap tree implementation
     // parent->

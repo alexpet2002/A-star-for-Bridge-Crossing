@@ -1,6 +1,6 @@
 import java.util.Comparator;
 
-public class MinPQ {
+public class MinPQ implements PriorityQueueMin{
     private Object[] heap;
     private int size;
     private static final int DEFAULT_CAPACITY = 4;
